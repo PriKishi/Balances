@@ -2,14 +2,14 @@ import { useState, useRef } from "react";
 import * as XLSX from "xlsx";
 
 const C = {
-  bg: "#0A0E1A", surface: "#111827", surfaceUp: "#1A2234", border: "#1E2D45",
-  accent: "#00C2FF", accentDim: "#0A3D52", green: "#00E5A0", greenDim: "#003D29",
-  red: "#FF4D6A", redDim: "#3D0014", amber: "#FFB547", amberDim: "#3D2800",
-  purple: "#CC88FF", purpleDim: "#2D1A4A",
-  muted: "#4A6080", text: "#E8F0FE", textDim: "#7A90B0",
+  bg:"#0A0E1A",surface:"#111827",surfaceUp:"#1A2234",border:"#1E2D45",
+  accent:"#00C2FF",accentDim:"#0A3D52",green:"#00E5A0",greenDim:"#003D29",
+  red:"#FF4D6A",redDim:"#3D0014",amber:"#FFB547",amberDim:"#3D2800",
+  purple:"#CC88FF",purpleDim:"#2D1A4A",
+  muted:"#4A6080",text:"#E8F0FE",textDim:"#7A90B0",
 };
 
-const css = `
+const css=`
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:${C.bg};color:${C.text};font-family:'Space Grotesk',sans-serif;}
@@ -28,8 +28,11 @@ const css = `
   .upload-icon{font-size:32px;margin-bottom:12px;}
   .upload-label{font-size:13px;font-weight:600;color:${C.textDim};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
   .upload-title{font-size:17px;font-weight:600;margin-bottom:6px;}
-  .upload-hint{font-size:12px;color:${C.textDim};}
-  .upload-filename{margin-top:12px;padding:8px 12px;background:${C.greenDim};border:1px solid ${C.green}44;border-radius:8px;font-size:12px;color:${C.green};font-family:'JetBrains Mono',monospace;}
+  .upload-hint{font-size:12px;color:${C.textDim};line-height:1.5;}
+  .format-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+  .chip{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:${C.surfaceUp};color:${C.textDim};border:1px solid ${C.border};font-family:'JetBrains Mono',monospace;}
+  .upload-filename{margin-top:12px;padding:8px 12px;background:${C.greenDim};border:1px solid ${C.green}44;border-radius:8px;font-size:12px;color:${C.green};font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px;}
+  .file-type-tag{background:${C.accentDim};color:${C.accent};padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;text-transform:uppercase;}
   .file-input{display:none;}
   .run-btn{width:100%;padding:16px;background:linear-gradient(135deg,${C.accent},#0066FF);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;}
   .run-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px ${C.accent}44;}
@@ -56,19 +59,18 @@ const css = `
   .sc-label{font-size:10px;color:${C.textDim};text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;line-height:1.4;}
   .sc-value{font-size:28px;font-weight:700;line-height:1;margin-bottom:3px;font-family:'JetBrains Mono',monospace;}
   .sc-sub{font-size:10px;color:${C.textDim};line-height:1.4;}
-  .v-total{color:${C.accent};} .v-matched{color:${C.green};} .v-miss-embat{color:${C.red};}
-  .v-miss-bank{color:#FF8C00;} .v-dup-bank{color:${C.purple};} .v-dup-embat{color:#FF6B9D;}
+  .v-total{color:${C.accent};}.v-matched{color:${C.green};}.v-miss-embat{color:${C.red};}
+  .v-miss-bank{color:#FF8C00;}.v-dup-bank{color:${C.purple};}.v-dup-embat{color:#FF6B9D;}
   .table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
   .table-title{font-size:16px;font-weight:600;}
   .filter-tabs{display:flex;gap:6px;flex-wrap:wrap;}
   .filter-tab{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Space Grotesk',sans-serif;background:transparent;}
-  .ft-all{color:${C.textDim};border-color:${C.border};}
-  .ft-all.active{background:${C.accentDim};color:${C.accent};border-color:${C.accent}44;}
-  .ft-matched{color:${C.green};border-color:${C.green}33;} .ft-matched.active{background:${C.greenDim};}
-  .ft-miss-embat{color:${C.red};border-color:${C.red}33;} .ft-miss-embat.active{background:${C.redDim};}
-  .ft-miss-bank{color:#FF8C00;border-color:#FF8C0033;} .ft-miss-bank.active{background:#3D2000;}
-  .ft-dup-bank{color:${C.purple};border-color:${C.purple}33;} .ft-dup-bank.active{background:${C.purpleDim};}
-  .ft-dup-embat{color:#FF6B9D;border-color:#FF6B9D33;} .ft-dup-embat.active{background:#3D0020;}
+  .ft-all{color:${C.textDim};border-color:${C.border};}.ft-all.active{background:${C.accentDim};color:${C.accent};border-color:${C.accent}44;}
+  .ft-matched{color:${C.green};border-color:${C.green}33;}.ft-matched.active{background:${C.greenDim};}
+  .ft-miss-embat{color:${C.red};border-color:${C.red}33;}.ft-miss-embat.active{background:${C.redDim};}
+  .ft-miss-bank{color:#FF8C00;border-color:#FF8C0033;}.ft-miss-bank.active{background:#3D2000;}
+  .ft-dup-bank{color:${C.purple};border-color:${C.purple}33;}.ft-dup-bank.active{background:${C.purpleDim};}
+  .ft-dup-embat{color:#FF6B9D;border-color:#FF6B9D33;}.ft-dup-embat.active{background:#3D0020;}
   .export-btn{padding:8px 16px;border-radius:8px;background:transparent;border:1px solid ${C.border};color:${C.textDim};font-size:13px;font-weight:500;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;gap:6px;}
   .export-btn:hover{border-color:${C.accent}66;color:${C.accent};background:${C.accentDim};}
   .table-wrap{background:${C.surface};border:1px solid ${C.border};border-radius:16px;overflow:hidden;}
@@ -85,7 +87,7 @@ const css = `
   .pill-dup-embat{background:#3D0020;color:#FF6B9D;border:1px solid #FF6B9D44;}
   .pill-fuzzy{background:#1A2A3A;color:#88CCFF;border:1px solid #88CCFF44;}
   .amount{font-family:'JetBrains Mono',monospace;font-size:12px;}
-  .neg{color:${C.red};} .pos{color:${C.green};}
+  .neg{color:${C.red};}.pos{color:${C.green};}
   .mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:${C.textDim};}
   .action-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
   .action-hide{background:#3D0020;color:#FF6B9D;}
@@ -95,6 +97,24 @@ const css = `
   .empty-icon{font-size:48px;margin-bottom:16px;}
   .empty-title{font-size:18px;font-weight:600;color:${C.text};margin-bottom:8px;}
 `;
+
+// ── File type detection ───────────────────────────────────────────────────────
+function getFileType(file) {
+  const name = file.name.toLowerCase();
+  if (name.match(/\.xlsx?$/)) return "excel";
+  if (name.match(/\.csv$/)) return "csv";
+  if (name.match(/\.xml$/)) return "xml";
+  if (name.match(/\.pdf$/)) return "pdf";
+  if (name.match(/\.(png|jpg|jpeg|webp|gif|bmp|tiff?)$/)) return "image";
+  return "unknown";
+}
+
+function getFileTypeBadge(file) {
+  if (!file) return null;
+  const t = getFileType(file);
+  const labels = { excel:"XLSX", csv:"CSV", xml:"XML", pdf:"PDF", image:"IMG" };
+  return labels[t] || "?";
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function parseDate(str) {
@@ -123,7 +143,7 @@ function parseAmount(v) {
   return isNaN(n)?null:n;
 }
 function dateDiff(a,b) {
-  const da=parseDate(a), db=parseDate(b);
+  const da=parseDate(a),db=parseDate(b);
   if(!da||!db) return 999;
   return Math.abs((da-db)/86400000);
 }
@@ -138,15 +158,99 @@ function strSim(a,b) {
 function fileToBase64(file) {
   return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
 }
+function fileToText(file) {
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(file,"utf-8");});
+}
 
-// ── Parse PDF ────────────────────────────────────────────────────────────────
-async function parsePDF(file, source) {
+// ── AI extraction (PDF + images via API) ─────────────────────────────────────
+async function extractViaAI(file, source, mediaType) {
   const base64 = await fileToBase64(file);
-  const prompt = `Extract ALL transactions from this bank statement PDF. Return ONLY a valid JSON array, no markdown. Each object: {"transaction_date":"DD/MM/YYYY","value_date":"DD/MM/YYYY","description":"full text","amount":number,"currency":"EUR","source":"${source}"}. Negative=outflow, positive=inflow. Include every row.`;
-  const res = await fetch("/api/parse-pdf",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({base64,prompt})});
+  const isImage = mediaType.startsWith("image/");
+  const prompt = `Extract ALL financial transactions from this ${isImage?"bank statement image/screenshot":"document"}. Return ONLY a valid JSON array, no markdown, no explanation. Each object must have exactly:
+{"transaction_date":"DD/MM/YYYY","value_date":"DD/MM/YYYY","description":"full description","amount":number,"currency":"EUR or other","source":"${source}"}
+Rules: negative amount = debit/outflow, positive = credit/inflow. Include every single transaction row. If value_date is missing use transaction_date.`;
+
+  const contentItem = isImage
+    ? { type:"image", source:{ type:"base64", media_type: mediaType, data: base64 } }
+    : { type:"document", source:{ type:"base64", media_type:"application/pdf", data: base64 } };
+
+  const res = await fetch("/api/parse-pdf",{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ base64, prompt, media_type: mediaType })
+  });
   const data = await res.json();
   if (data.error) throw new Error(data.error);
   return JSON.parse(data.text.replace(/```json|```/g,"").trim());
+}
+
+// ── Parse CSV ─────────────────────────────────────────────────────────────────
+async function parseCSV(file, source) {
+  const text = await fileToText(file);
+  const lines = text.split(/\r?\n/).filter(l=>l.trim());
+  if (lines.length < 2) throw new Error("CSV vacío o sin datos");
+
+  // Detect separator
+  const sep = lines[0].includes(";") ? ";" : ",";
+  const splitLine = l => l.split(sep).map(c=>c.replace(/^"|"$/g,"").trim());
+
+  const headers = splitLine(lines[0]).map(h=>h.toLowerCase());
+  const idx=(...kws)=>{ for(const k of kws){const i=headers.findIndex(h=>h.includes(k));if(i!==-1)return i;} return -1; };
+
+  const dateIdx  = idx("fecha","date","f. contable","transaction","posting");
+  const valIdx   = idx("valor","value date","f. valor");
+  const descIdx  = idx("concepto","description","observaciones","desc","beneficiario");
+  const amtIdx   = idx("importe","amount","accounting","monto","cargo");
+  const curIdx   = idx("currency","divisa","moneda");
+
+  const rows = [];
+  for (let i=1;i<lines.length;i++) {
+    const cols = splitLine(lines[i]);
+    if (cols.every(c=>!c)) continue;
+    const amt = parseAmount(cols[amtIdx]);
+    if (amt==null) continue;
+    rows.push({
+      transaction_date: cols[dateIdx]||"",
+      value_date: cols[valIdx]||"",
+      description: cols[descIdx]||"",
+      amount: amt,
+      currency: curIdx!==-1?cols[curIdx]:"",
+      source
+    });
+  }
+  return rows;
+}
+
+// ── Parse XML ─────────────────────────────────────────────────────────────────
+async function parseXML(file, source) {
+  const text = await fileToText(file);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(text, "application/xml");
+
+  // Try common bank XML structures
+  const txNodes = doc.querySelectorAll("Ntry, TxDtls, transaction, Transaction, movement, Movement, apunte, Apunte");
+  if (!txNodes.length) {
+    // Fallback: use AI to parse it
+    return extractViaAI(file, source, "text/plain");
+  }
+
+  const rows = [];
+  txNodes.forEach(node => {
+    const getText = (...tags) => { for(const t of tags){ const el=node.querySelector(t); if(el?.textContent) return el.textContent.trim(); } return ""; };
+    const amtEl = node.querySelector("Amt, amount, Amount, importe, Importe");
+    const amt = parseAmount(amtEl?.textContent);
+    if (amt==null) return;
+    const cdtDbt = getText("CdtDbtInd","CdtDbt","type","tipo");
+    const finalAmt = cdtDbt.toUpperCase()==="DBIT" ? -Math.abs(amt) : amt;
+    rows.push({
+      transaction_date: getText("BookgDt","ValDt","fecha","Date","date","BookingDate"),
+      value_date: getText("ValDt","ValueDate","fechaValor"),
+      description: getText("AddtlNtryInf","Ustrd","concepto","description","Description","narrative"),
+      amount: finalAmt,
+      currency: amtEl?.getAttribute("Ccy") || getText("currency","Currency","moneda") || "",
+      source
+    });
+  });
+  return rows;
 }
 
 // ── Parse Excel ───────────────────────────────────────────────────────────────
@@ -165,7 +269,6 @@ async function parseExcel(file, source) {
           const row=(raw[i]||[]).map(c=>String(c||"").toLowerCase().trim());
           if (row.some(c=>DATE_KW.some(k=>c.includes(k)))) { headerIdx=i; headers=row; break; }
         }
-        // Fallback: row with most non-empty cells
         if (headerIdx===-1) {
           let best=-1,bestCnt=0;
           for (let i=0;i<Math.min(raw.length,20);i++) {
@@ -174,7 +277,7 @@ async function parseExcel(file, source) {
           }
           if(best!==-1){headerIdx=best;headers=(raw[best]||[]).map(c=>String(c||"").toLowerCase().trim());}
         }
-        if (headerIdx===-1){reject(new Error("No se encontró fila de cabecera"));return;}
+        if (headerIdx===-1){reject(new Error("No se encontró cabecera en el Excel"));return;}
 
         const idx=(...kws)=>{for(const k of kws){const i=headers.findIndex(h=>h.includes(k));if(i!==-1)return i;}return -1;};
         const dateIdx = idx("transaction date","fecha contable","f. contable","f.contable","posting","fecha");
@@ -193,7 +296,6 @@ async function parseExcel(file, source) {
           const dateRaw=r[dateIdx];
           if(dateRaw==null) continue;
           let dateStr=String(dateRaw).trim();
-          // Handle Excel serial number dates
           if(/^\d{5}$/.test(dateStr)) {
             try{const d=XLSX.SSF.parse_date_code(parseInt(dateStr));dateStr=`${String(d.d).padStart(2,"0")}/${String(d.m).padStart(2,"0")}/${d.y}`;}catch(e){}
           }
@@ -208,28 +310,42 @@ async function parseExcel(file, source) {
   });
 }
 
+// ── Main file router ──────────────────────────────────────────────────────────
+async function parseFile(file, source) {
+  const type = getFileType(file);
+  switch(type) {
+    case "excel": return parseExcel(file, source);
+    case "csv":   return parseCSV(file, source);
+    case "xml":   return parseXML(file, source);
+    case "pdf":   return extractViaAI(file, source, "application/pdf");
+    case "image": {
+      const ext = file.name.split(".").pop().toLowerCase();
+      const mime = ext==="jpg"||ext==="jpeg" ? "image/jpeg" : ext==="png" ? "image/png" : ext==="webp" ? "image/webp" : "image/png";
+      return extractViaAI(file, source, mime);
+    }
+    default: throw new Error(`Formato no soportado: ${file.name}`);
+  }
+}
+
 // ── Duplicate detection ───────────────────────────────────────────────────────
 function findDuplicates(txs) {
   const dups=new Set();
-  for(let i=0;i<txs.length;i++){
+  for(let i=0;i<txs.length;i++)
     for(let j=i+1;j<txs.length;j++){
       const a=txs[i],b=txs[j];
       if(Math.abs((a.amount||0)-(b.amount||0))<0.02 && dateDiff(a.transaction_date,b.transaction_date)<=1 && strSim(a.description,b.description)>0.5){
         dups.add(i);dups.add(j);
       }
     }
-  }
   return dups;
 }
 
 // ── Reconcile ─────────────────────────────────────────────────────────────────
 function reconcile(bankTxs, embatTxs) {
-  const results=[], usedEmbat=new Set(), usedBank=new Set();
-  const bankDups=findDuplicates(bankTxs), embatDups=findDuplicates(embatTxs);
-
+  const results=[],usedEmbat=new Set(),usedBank=new Set();
+  const bankDups=findDuplicates(bankTxs),embatDups=findDuplicates(embatTxs);
   bankTxs.forEach((tx,i)=>{if(bankDups.has(i)){results.push({status:"dup_in_bank",bank:tx,embat:null,score:0,action:"hide"});usedBank.add(i);}});
   embatTxs.forEach((tx,i)=>{if(embatDups.has(i)){results.push({status:"dup_in_embat",bank:null,embat:tx,score:0,action:"hide"});usedEmbat.add(i);}});
-
   bankTxs.forEach((bank,bi)=>{
     if(usedBank.has(bi)) return;
     let best=null,bestScore=-1;
@@ -283,11 +399,11 @@ export default function App() {
     if(!bankFile||!embatFile)return;
     setAppStatus("processing");setResults(null);setDebugInfo(null);setProgress(10);
     try{
-      setStatusMsg("📄 Leyendo extracto del banco...");setProgress(20);
-      const bankTxs=bankFile.name.match(/\.xlsx?$/i)?await parseExcel(bankFile,"bank"):await parsePDF(bankFile,"bank");
-      setStatusMsg("📊 Leyendo export de Embat...");setProgress(55);
-      const embatTxs=embatFile.name.match(/\.xlsx?$/i)?await parseExcel(embatFile,"embat"):await parsePDF(embatFile,"embat");
-      setDebugInfo({bankCount:bankTxs.length,embatCount:embatTxs.length});
+      setStatusMsg(`📄 Leyendo extracto del banco (${getFileType(bankFile).toUpperCase()})...`);setProgress(20);
+      const bankTxs=await parseFile(bankFile,"bank");
+      setStatusMsg(`📊 Leyendo export de Embat (${getFileType(embatFile).toUpperCase()})...`);setProgress(55);
+      const embatTxs=await parseFile(embatFile,"embat");
+      setDebugInfo({bankCount:bankTxs.length,embatCount:embatTxs.length,bankType:getFileType(bankFile),embatType:getFileType(embatFile)});
       setStatusMsg("🔍 Cruzando transacciones...");setProgress(85);
       await new Promise(r=>setTimeout(r,200));
       setResults(reconcile(bankTxs,embatTxs));
@@ -338,12 +454,13 @@ export default function App() {
       <div className="header">
         <div className="logo">E</div>
         <div><div className="header-title">Embat Reconciler</div><div className="header-sub">Bank ↔ Embat · Transaction Matching</div></div>
-        <div className="header-badge">v2.0</div>
+        <div className="header-badge">v3.0 — Multi-format</div>
       </div>
       <div className="main">
         <div className="upload-grid">
-          {[{type:"bank",icon:"🏦",label:"Fuente 1",title:"Extracto del Banco",hint:"Excel de BBVA, Naspa… o PDF",ref:bankRef,file:bankFile,set:setBankFile},
-            {type:"embat",icon:"📊",label:"Fuente 2",title:"Export de Embat",hint:"Excel descargado desde Embat o PDF",ref:embatRef,file:embatFile,set:setEmbatFile}
+          {[
+            {type:"bank",icon:"🏦",label:"Fuente 1",title:"Extracto del Banco",hint:"Cualquier formato del banco",ref:bankRef,file:bankFile,set:setBankFile},
+            {type:"embat",icon:"📊",label:"Fuente 2",title:"Export de Embat",hint:"Cualquier formato de Embat",ref:embatRef,file:embatFile,set:setEmbatFile}
           ].map(({type,icon,label,title,hint,ref,file,set})=>(
             <div key={type} className={`upload-card ${file?"has-file":""} ${dragging===type?"dragging":""}`}
               onClick={()=>ref.current.click()}
@@ -354,8 +471,20 @@ export default function App() {
               <div className="upload-label">{label}</div>
               <div className="upload-title">{title}</div>
               <div className="upload-hint">{hint}</div>
-              {file&&<div className="upload-filename">✓ {file.name}</div>}
-              <input ref={ref} type="file" className="file-input" accept=".pdf,.xlsx,.xls" onChange={e=>set(e.target.files[0])}/>
+              <div className="format-chips">
+                {["PDF","XLSX","CSV","XML","PNG","JPG"].map(f=>(
+                  <span key={f} className="chip">{f}</span>
+                ))}
+              </div>
+              {file&&(
+                <div className="upload-filename">
+                  <span className="file-type-tag">{getFileTypeBadge(file)}</span>
+                  {file.name}
+                </div>
+              )}
+              <input ref={ref} type="file" className="file-input"
+                accept=".pdf,.xlsx,.xls,.csv,.xml,.png,.jpg,.jpeg,.webp"
+                onChange={e=>set(e.target.files[0])}/>
             </div>
           ))}
         </div>
@@ -372,9 +501,9 @@ export default function App() {
 
         {debugInfo&&(
           <div className="debug-bar">
-            <span>🏦 Banco: <strong>{debugInfo.bankCount}</strong> transacciones</span>
-            <span>📊 Embat: <strong>{debugInfo.embatCount}</strong> transacciones</span>
-            {debugInfo.bankCount===0&&<span>⚠️ El parser no encontró datos en el banco — verifica que el Excel tenga columnas de fecha e importe</span>}
+            <span>🏦 Banco [{debugInfo.bankType.toUpperCase()}]: <strong>{debugInfo.bankCount}</strong> transacciones</span>
+            <span>📊 Embat [{debugInfo.embatType.toUpperCase()}]: <strong>{debugInfo.embatCount}</strong> transacciones</span>
+            {debugInfo.bankCount===0&&<span>⚠️ 0 tx en banco — verifica que el archivo tenga columnas de fecha e importe</span>}
           </div>
         )}
 
@@ -382,11 +511,11 @@ export default function App() {
           <div className="summary-cards">
             {[
               {cls:"sc-total",vcls:"v-total",label:"Total filas",val:counts.total,sub:"resultado del cruce"},
-              {cls:"sc-matched",vcls:"v-matched",label:"Coinciden ✓",val:counts.matched,sub:`${counts.total?Math.round(counts.matched/counts.total*100):0}% match · Sin acción`},
-              {cls:"sc-miss-embat",vcls:"v-miss-embat",label:"Falta en Embat",val:counts.miss_embat,sub:"En banco, no en Embat → reportar al banco"},
+              {cls:"sc-matched",vcls:"v-matched",label:"Coinciden ✓",val:counts.matched,sub:`${counts.total?Math.round(counts.matched/counts.total*100):0}% · Sin acción`},
+              {cls:"sc-miss-embat",vcls:"v-miss-embat",label:"Falta en Embat",val:counts.miss_embat,sub:"En banco, no en Embat → reportar banco"},
               {cls:"sc-miss-bank",vcls:"v-miss-bank",label:"Falta en Banco",val:counts.miss_bank,sub:"En Embat, no en banco → revisar"},
               {cls:"sc-dup-bank",vcls:"v-dup-bank",label:"Dup. en Banco",val:counts.dup_bank,sub:"Misma tx 2x en extracto banco"},
-              {cls:"sc-dup-embat",vcls:"v-dup-embat",label:"Dup. en Embat",val:counts.dup_embat,sub:"Misma tx 2x en Embat → ocultar backoffice"},
+              {cls:"sc-dup-embat",vcls:"v-dup-embat",label:"Dup. en Embat",val:counts.dup_embat,sub:"Misma tx 2x → ocultar backoffice"},
             ].map(({cls,vcls,label,val,sub})=>(
               <div key={cls} className={`summary-card ${cls}`}>
                 <div className="sc-label">{label}</div>
@@ -452,7 +581,7 @@ export default function App() {
           <div className="empty-state">
             <div className="empty-icon">🔄</div>
             <div className="empty-title">Listo para analizar</div>
-            <div style={{fontSize:14,color:C.textDim,marginTop:8}}>Sube el extracto bancario y el export de Embat para cruzar transacciones automáticamente.</div>
+            <div style={{fontSize:14,color:C.textDim,marginTop:8}}>Acepta PDF · Excel · CSV · XML · Imágenes y Screenshots</div>
           </div>
         )}
       </div>
