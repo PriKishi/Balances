@@ -52,25 +52,25 @@ const css=`
   .summary-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
   .sc-total::after{background:${C.accent};}
   .sc-matched::after{background:${C.green};}
-  .sc-miss-embat::after{background:${C.red};}
+  .sc-miss-company::after{background:${C.red};}
   .sc-miss-bank::after{background:#FF8C00;}
   .sc-dup-bank::after{background:${C.purple};}
-  .sc-dup-embat::after{background:#FF6B9D;}
+  .sc-dup-company::after{background:#FF6B9D;}
   .sc-label{font-size:10px;color:${C.textDim};text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;line-height:1.4;}
   .sc-value{font-size:28px;font-weight:700;line-height:1;margin-bottom:3px;font-family:'JetBrains Mono',monospace;}
   .sc-sub{font-size:10px;color:${C.textDim};line-height:1.4;}
-  .v-total{color:${C.accent};}.v-matched{color:${C.green};}.v-miss-embat{color:${C.red};}
-  .v-miss-bank{color:#FF8C00;}.v-dup-bank{color:${C.purple};}.v-dup-embat{color:#FF6B9D;}
+  .v-total{color:${C.accent};}.v-matched{color:${C.green};}.v-miss-company{color:${C.red};}
+  .v-miss-bank{color:#FF8C00;}.v-dup-bank{color:${C.purple};}.v-dup-company{color:#FF6B9D;}
   .table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
   .table-title{font-size:16px;font-weight:600;}
   .filter-tabs{display:flex;gap:6px;flex-wrap:wrap;}
   .filter-tab{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Space Grotesk',sans-serif;background:transparent;}
   .ft-all{color:${C.textDim};border-color:${C.border};}.ft-all.active{background:${C.accentDim};color:${C.accent};border-color:${C.accent}44;}
   .ft-matched{color:${C.green};border-color:${C.green}33;}.ft-matched.active{background:${C.greenDim};}
-  .ft-miss-embat{color:${C.red};border-color:${C.red}33;}.ft-miss-embat.active{background:${C.redDim};}
+  .ft-miss-company{color:${C.red};border-color:${C.red}33;}.ft-miss-company.active{background:${C.redDim};}
   .ft-miss-bank{color:#FF8C00;border-color:#FF8C0033;}.ft-miss-bank.active{background:#3D2000;}
   .ft-dup-bank{color:${C.purple};border-color:${C.purple}33;}.ft-dup-bank.active{background:${C.purpleDim};}
-  .ft-dup-embat{color:#FF6B9D;border-color:#FF6B9D33;}.ft-dup-embat.active{background:#3D0020;}
+  .ft-dup-company{color:#FF6B9D;border-color:#FF6B9D33;}.ft-dup-company.active{background:#3D0020;}
   .export-btn{padding:8px 16px;border-radius:8px;background:transparent;border:1px solid ${C.border};color:${C.textDim};font-size:13px;font-weight:500;cursor:pointer;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;gap:6px;}
   .export-btn:hover{border-color:${C.accent}66;color:${C.accent};background:${C.accentDim};}
   .table-wrap{background:${C.surface};border:1px solid ${C.border};border-radius:16px;overflow:hidden;}
@@ -81,10 +81,10 @@ const css=`
   .results-table tr:hover td{background:${C.surfaceUp}33;}
   .pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
   .pill-matched{background:${C.greenDim};color:${C.green};border:1px solid ${C.green}44;}
-  .pill-miss-embat{background:${C.redDim};color:${C.red};border:1px solid ${C.red}44;}
+  .pill-miss-company{background:${C.redDim};color:${C.red};border:1px solid ${C.red}44;}
   .pill-miss-bank{background:#3D2000;color:#FF8C00;border:1px solid #FF8C0044;}
   .pill-dup-bank{background:${C.purpleDim};color:${C.purple};border:1px solid ${C.purple}44;}
-  .pill-dup-embat{background:#3D0020;color:#FF6B9D;border:1px solid #FF6B9D44;}
+  .pill-dup-company{background:#3D0020;color:#FF6B9D;border:1px solid #FF6B9D44;}
   .pill-fuzzy{background:#1A2A3A;color:#88CCFF;border:1px solid #88CCFF44;}
   .amount{font-family:'JetBrains Mono',monospace;font-size:12px;}
   .neg{color:${C.red};}.pos{color:${C.green};}
@@ -341,16 +341,16 @@ function findDuplicates(txs) {
 }
 
 // ── Reconcile ─────────────────────────────────────────────────────────────────
-function reconcile(bankTxs, embatTxs) {
-  const results=[],usedEmbat=new Set(),usedBank=new Set();
-  const bankDups=findDuplicates(bankTxs),embatDups=findDuplicates(embatTxs);
-  bankTxs.forEach((tx,i)=>{if(bankDups.has(i)){results.push({status:"dup_in_bank",bank:tx,embat:null,score:0,action:"hide"});usedBank.add(i);}});
-  embatTxs.forEach((tx,i)=>{if(embatDups.has(i)){results.push({status:"dup_in_embat",bank:null,embat:tx,score:0,action:"hide"});usedEmbat.add(i);}});
+function reconcile(bankTxs, companyTxs) {
+  const results=[],usedcompany=new Set(),usedBank=new Set();
+  const bankDups=findDuplicates(bankTxs),companyDups=findDuplicates(companyTxs);
+  bankTxs.forEach((tx,i)=>{if(bankDups.has(i)){results.push({status:"dup_in_bank",bank:tx,company:null,score:0,action:"hide"});usedBank.add(i);}});
+  companyTxs.forEach((tx,i)=>{if(companyDups.has(i)){results.push({status:"dup_in_company",bank:null,company:tx,score:0,action:"hide"});usedcompany.add(i);}});
   bankTxs.forEach((bank,bi)=>{
     if(usedBank.has(bi)) return;
     let best=null,bestScore=-1;
-    embatTxs.forEach((e,ei)=>{
-      if(usedEmbat.has(ei)) return;
+    companyTxs.forEach((e,ei)=>{
+      if(usedcompany.has(ei)) return;
       const dd=dateDiff(bank.transaction_date,e.transaction_date);
       const amtOk=Math.abs((e.amount||0)-(bank.amount||0))<0.02;
       let sc=0;
@@ -360,30 +360,30 @@ function reconcile(bankTxs, embatTxs) {
       if(sc>bestScore&&sc>50){bestScore=sc;best=ei;}
     });
     if(best!==null){
-      const e=embatTxs[best];usedEmbat.add(best);usedBank.add(bi);
-      results.push({status:bestScore>=85?"matched":"fuzzy",bank,embat:e,score:bestScore,dateDiff:dateDiff(bank.transaction_date,e.transaction_date),action:"ok"});
+      const e=companyTxs[best];usedcompany.add(best);usedBank.add(bi);
+      results.push({status:bestScore>=85?"matched":"fuzzy",bank,company:e,score:bestScore,dateDiff:dateDiff(bank.transaction_date,e.transaction_date),action:"ok"});
     } else {
-      results.push({status:"missing_in_embat",bank,embat:null,score:0,action:"report_bank"});
+      results.push({status:"missing_in_company",bank,company:null,score:0,action:"report_bank"});
     }
   });
-  embatTxs.forEach((e,ei)=>{if(!usedEmbat.has(ei))results.push({status:"missing_in_bank",bank:null,embat:e,score:0,action:"report_embat"});});
+  companyTxs.forEach((e,ei)=>{if(!usedcompany.has(ei))results.push({status:"missing_in_bank",bank:null,company:e,score:0,action:"report_company"});});
   return results;
 }
 
 // ── Export ────────────────────────────────────────────────────────────────────
 function exportCSV(results) {
-  const LABELS={matched:"✓ Match exacto",fuzzy:"~ Match probable",missing_in_embat:"✗ Falta en Embat",missing_in_bank:"✗ Falta en Banco",dup_in_bank:"⚠ Duplicado Banco",dup_in_embat:"⚠ Duplicado Embat"};
-  const ACTIONS={ok:"Sin acción",report_bank:"Reportar al banco",report_embat:"Revisar en Embat",hide:"Ocultar en back office"};
-  const rows=[["Estado","Acción recomendada","Fecha Banco","Descripción Banco","Importe Banco","Moneda","Fecha Embat","Descripción Embat","Importe Embat","Δ días"]];
-  for(const r of results) rows.push([LABELS[r.status]||r.status,ACTIONS[r.action]||"",r.bank?.transaction_date||"",r.bank?.description||"",r.bank?.amount||"",r.bank?.currency||r.embat?.currency||"",r.embat?.transaction_date||"",r.embat?.description||"",r.embat?.amount||"",r.dateDiff??""]);
+  const LABELS={matched:"✓ Match exacto",fuzzy:"~ Match probable",missing_in_company:"✗ Falta en company",missing_in_bank:"✗ Falta en Banco",dup_in_bank:"⚠ Duplicado Banco",dup_in_company:"⚠ Duplicado company"};
+  const ACTIONS={ok:"Sin acción",report_bank:"Reportar al banco",report_company:"Revisar en company",hide:"Ocultar en back office"};
+  const rows=[["Estado","Acción recomendada","Fecha Banco","Descripción Banco","Importe Banco","Moneda","Fecha company","Descripción company","Importe company","Δ días"]];
+  for(const r of results) rows.push([LABELS[r.status]||r.status,ACTIONS[r.action]||"",r.bank?.transaction_date||"",r.bank?.description||"",r.bank?.amount||"",r.bank?.currency||r.company?.currency||"",r.company?.transaction_date||"",r.company?.description||"",r.company?.amount||"",r.dateDiff??""]);
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download="embat_reconciliation.csv";a.click();
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download="company_reconciliation.csv";a.click();
 }
 
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [bankFile,setBankFile]=useState(null);
-  const [embatFile,setEmbatFile]=useState(null);
+  const [companyFile,setcompanyFile]=useState(null);
   const [results,setResults]=useState(null);
   const [debugInfo,setDebugInfo]=useState(null);
   const [appStatus,setAppStatus]=useState("idle");
@@ -391,60 +391,60 @@ export default function App() {
   const [progress,setProgress]=useState(0);
   const [filter,setFilter]=useState("all");
   const [dragging,setDragging]=useState(null);
-  const bankRef=useRef(),embatRef=useRef();
+  const bankRef=useRef(),companyRef=useRef();
 
-  const handleDrop=(type,e)=>{e.preventDefault();setDragging(null);const f=e.dataTransfer.files[0];if(!f)return;type==="bank"?setBankFile(f):setEmbatFile(f);};
+  const handleDrop=(type,e)=>{e.preventDefault();setDragging(null);const f=e.dataTransfer.files[0];if(!f)return;type==="bank"?setBankFile(f):setcompanyFile(f);};
 
   const run=async()=>{
-    if(!bankFile||!embatFile)return;
+    if(!bankFile||!companyFile)return;
     setAppStatus("processing");setResults(null);setDebugInfo(null);setProgress(10);
     try{
       setStatusMsg(`📄 Leyendo extracto del banco (${getFileType(bankFile).toUpperCase()})...`);setProgress(20);
       const bankTxs=await parseFile(bankFile,"bank");
-      setStatusMsg(`📊 Leyendo export de Embat (${getFileType(embatFile).toUpperCase()})...`);setProgress(55);
-      const embatTxs=await parseFile(embatFile,"embat");
-      setDebugInfo({bankCount:bankTxs.length,embatCount:embatTxs.length,bankType:getFileType(bankFile),embatType:getFileType(embatFile)});
+      setStatusMsg(`📊 Leyendo export de company (${getFileType(companyFile).toUpperCase()})...`);setProgress(55);
+      const companyTxs=await parseFile(companyFile,"company");
+      setDebugInfo({bankCount:bankTxs.length,companyCount:companyTxs.length,bankType:getFileType(bankFile),companyType:getFileType(companyFile)});
       setStatusMsg("🔍 Cruzando transacciones...");setProgress(85);
       await new Promise(r=>setTimeout(r,200));
-      setResults(reconcile(bankTxs,embatTxs));
+      setResults(reconcile(bankTxs,companyTxs));
       setProgress(100);setAppStatus("done");
-      setStatusMsg(`✅ Completado — ${bankTxs.length} tx banco · ${embatTxs.length} tx Embat`);
+      setStatusMsg(`✅ Completado — ${bankTxs.length} tx banco · ${companyTxs.length} tx company`);
     }catch(err){setAppStatus("error");setStatusMsg("❌ Error: "+err.message);setProgress(0);}
   };
 
   const FILTERS=[
     {key:"all",cls:"ft-all",label:"Todos"},
     {key:"matched",cls:"ft-matched",label:"✓ Match"},
-    {key:"missing_in_embat",cls:"ft-miss-embat",label:"✗ Falta en Embat"},
+    {key:"missing_in_company",cls:"ft-miss-company",label:"✗ Falta en company"},
     {key:"missing_in_bank",cls:"ft-miss-bank",label:"✗ Falta en Banco"},
     {key:"dup_in_bank",cls:"ft-dup-bank",label:"⚠ Dup. Banco"},
-    {key:"dup_in_embat",cls:"ft-dup-embat",label:"⚠ Dup. Embat"},
+    {key:"dup_in_company",cls:"ft-dup-company",label:"⚠ Dup. company"},
   ];
 
   const counts=results?{
     total:results.length,
     matched:results.filter(r=>r.status==="matched"||r.status==="fuzzy").length,
-    miss_embat:results.filter(r=>r.status==="missing_in_embat").length,
+    miss_company:results.filter(r=>r.status==="missing_in_company").length,
     miss_bank:results.filter(r=>r.status==="missing_in_bank").length,
     dup_bank:results.filter(r=>r.status==="dup_in_bank").length,
-    dup_embat:results.filter(r=>r.status==="dup_in_embat").length,
+    dup_company:results.filter(r=>r.status==="dup_in_company").length,
   }:null;
 
-  const fCount=k=>k==="all"?counts?.total:k==="matched"?counts?.matched:k==="missing_in_embat"?counts?.miss_embat:k==="missing_in_bank"?counts?.miss_bank:k==="dup_in_bank"?counts?.dup_bank:counts?.dup_embat;
+  const fCount=k=>k==="all"?counts?.total:k==="matched"?counts?.matched:k==="missing_in_company"?counts?.miss_company:k==="missing_in_bank"?counts?.miss_bank:k==="dup_in_bank"?counts?.dup_bank:counts?.dup_company;
   const filtered=results?(filter==="all"?results:filter==="matched"?results.filter(r=>r.status==="matched"||r.status==="fuzzy"):results.filter(r=>r.status===filter)):[];
 
   const PILL={
     matched:<span className="pill pill-matched">✓ Match exacto</span>,
     fuzzy:<span className="pill pill-fuzzy">~ Match probable</span>,
-    missing_in_embat:<span className="pill pill-miss-embat">✗ Falta en Embat</span>,
+    missing_in_company:<span className="pill pill-miss-company">✗ Falta en Companyt</span>,
     missing_in_bank:<span className="pill pill-miss-bank">✗ Falta en Banco</span>,
     dup_in_bank:<span className="pill pill-dup-bank">⚠ Dup. Banco</span>,
-    dup_in_embat:<span className="pill pill-dup-embat">⚠ Dup. Embat</span>,
+    dup_in_company:<span className="pill pill-dup-company">⚠ Dup. Company</span>,
   };
   const ACTION={
     ok:<span className="action-badge action-ok">Sin acción</span>,
     report_bank:<span className="action-badge action-report">Reportar al banco</span>,
-    report_embat:<span className="action-badge action-report">Revisar en Embat</span>,
+    report_company:<span className="action-badge action-report">Revisar en company</span>,
     hide:<span className="action-badge action-hide">Ocultar en back office</span>,
   };
 
@@ -453,14 +453,14 @@ export default function App() {
       <style>{css}</style>
       <div className="header">
         <div className="logo">E</div>
-        <div><div className="header-title">Embat Reconciler</div><div className="header-sub">Bank ↔ Embat · Transaction Matching</div></div>
+        <div><div className="header-title">company Reconciler</div><div className="header-sub">Bank ↔ company · Transaction Matching</div></div>
         <div className="header-badge">v3.0 — Multi-format</div>
       </div>
       <div className="main">
         <div className="upload-grid">
           {[
             {type:"bank",icon:"🏦",label:"Fuente 1",title:"Extracto del Banco",hint:"Cualquier formato del banco",ref:bankRef,file:bankFile,set:setBankFile},
-            {type:"embat",icon:"📊",label:"Fuente 2",title:"Export de Embat",hint:"Cualquier formato de Embat",ref:embatRef,file:embatFile,set:setEmbatFile}
+            {type:"company",icon:"📊",label:"Fuente 2",title:"Export de Company",hint:"Cualquier formato de company",ref:companyRef,file:companyFile,set:setcompanyFile}
           ].map(({type,icon,label,title,hint,ref,file,set})=>(
             <div key={type} className={`upload-card ${file?"has-file":""} ${dragging===type?"dragging":""}`}
               onClick={()=>ref.current.click()}
@@ -489,7 +489,7 @@ export default function App() {
           ))}
         </div>
 
-        <button className="run-btn" onClick={run} disabled={!bankFile||!embatFile||appStatus==="processing"}>
+        <button className="run-btn" onClick={run} disabled={!bankFile||!companyFile||appStatus==="processing"}>
           {appStatus==="processing"?"⏳ Analizando...":"🔍 Analizar y Cruzar Transacciones"}
         </button>
 
@@ -502,7 +502,7 @@ export default function App() {
         {debugInfo&&(
           <div className="debug-bar">
             <span>🏦 Banco [{debugInfo.bankType.toUpperCase()}]: <strong>{debugInfo.bankCount}</strong> transacciones</span>
-            <span>📊 Embat [{debugInfo.embatType.toUpperCase()}]: <strong>{debugInfo.embatCount}</strong> transacciones</span>
+            <span>📊 Company [{debugInfo.companyType.toUpperCase()}]: <strong>{debugInfo.companyCount}</strong> transacciones</span>
             {debugInfo.bankCount===0&&<span>⚠️ 0 tx en banco — verifica que el archivo tenga columnas de fecha e importe</span>}
           </div>
         )}
@@ -512,10 +512,10 @@ export default function App() {
             {[
               {cls:"sc-total",vcls:"v-total",label:"Total filas",val:counts.total,sub:"resultado del cruce"},
               {cls:"sc-matched",vcls:"v-matched",label:"Coinciden ✓",val:counts.matched,sub:`${counts.total?Math.round(counts.matched/counts.total*100):0}% · Sin acción`},
-              {cls:"sc-miss-embat",vcls:"v-miss-embat",label:"Falta en Embat",val:counts.miss_embat,sub:"En banco, no en Embat → reportar banco"},
-              {cls:"sc-miss-bank",vcls:"v-miss-bank",label:"Falta en Banco",val:counts.miss_bank,sub:"En Embat, no en banco → revisar"},
+              {cls:"sc-miss-company",vcls:"v-miss-company",label:"Falta en company",val:counts.miss_company,sub:"En banco, no en company → reportar banco"},
+              {cls:"sc-miss-bank",vcls:"v-miss-bank",label:"Falta en Banco",val:counts.miss_bank,sub:"En company, no en banco → revisar"},
               {cls:"sc-dup-bank",vcls:"v-dup-bank",label:"Dup. en Banco",val:counts.dup_bank,sub:"Misma tx 2x en extracto banco"},
-              {cls:"sc-dup-embat",vcls:"v-dup-embat",label:"Dup. en Embat",val:counts.dup_embat,sub:"Misma tx 2x → ocultar backoffice"},
+              {cls:"sc-dup-company",vcls:"v-dup-company",label:"Dup. en company",val:counts.dup_company,sub:"Misma tx 2x → ocultar backoffice"},
             ].map(({cls,vcls,label,val,sub})=>(
               <div key={cls} className={`summary-card ${cls}`}>
                 <div className="sc-label">{label}</div>
@@ -550,7 +550,7 @@ export default function App() {
                     <thead><tr>
                       <th>Estado</th><th>Acción</th>
                       <th>Fecha Banco</th><th>Descripción Banco</th><th>Importe Banco</th>
-                      <th>Fecha Embat</th><th>Descripción Embat</th><th>Importe Embat</th>
+                      <th>Fecha company</th><th>Descripción company</th><th>Importe company</th>
                       <th>Δ días</th>
                     </tr></thead>
                     <tbody>
@@ -561,9 +561,9 @@ export default function App() {
                           <td className="mono">{fmtDate(r.bank?.transaction_date)}</td>
                           <td style={{maxWidth:220,fontSize:12,lineHeight:1.4}}>{r.bank?.description?.slice(0,80)||"—"}</td>
                           <td><span className={`amount ${(r.bank?.amount||0)<0?"neg":"pos"}`}>{fmtAmt(r.bank?.amount,r.bank?.currency)}</span></td>
-                          <td className="mono">{fmtDate(r.embat?.transaction_date)}</td>
-                          <td style={{maxWidth:220,fontSize:12,lineHeight:1.4}}>{r.embat?.description?.slice(0,80)||"—"}</td>
-                          <td><span className={`amount ${(r.embat?.amount||0)<0?"neg":"pos"}`}>{fmtAmt(r.embat?.amount,r.embat?.currency)}</span></td>
+                          <td className="mono">{fmtDate(r.company?.transaction_date)}</td>
+                          <td style={{maxWidth:220,fontSize:12,lineHeight:1.4}}>{r.company?.description?.slice(0,80)||"—"}</td>
+                          <td><span className={`amount ${(r.company?.amount||0)<0?"neg":"pos"}`}>{fmtAmt(r.company?.amount,r.company?.currency)}</span></td>
                           <td className="mono" style={{textAlign:"center"}}>
                             {r.dateDiff!=null?<span style={{color:r.dateDiff===0?C.green:r.dateDiff<=2?C.amber:C.red}}>{r.dateDiff}d</span>:"—"}
                           </td>
