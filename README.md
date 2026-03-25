@@ -1,8 +1,8 @@
-# Embat Reconciler — Guía de Deploy
+# Reconciler tool — Guía de Deploy
 
 ## Estructura del proyecto
 ```
-embat-reconciler/
+reconciler/
 ├── api/
 │   └── parse-pdf.js       ← función segura que llama a Anthropic
 ├── src/
